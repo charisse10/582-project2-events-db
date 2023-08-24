@@ -15,41 +15,40 @@ const uri =
 // parse application/json
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  const client = new MongoClient(uri);
-  async function run() {
-    try {
-      const database = client.db("mongodemo");
-      const student = database.collection("student");
-      const result = await student.find({}).toArray();
-      console.log(result);
-      res.send(result);
-    } finally {
-      // Ensures that the client will close when you finish/error
-      await client.close();
-    }
-  }
-  run().catch(console.dir);
-});
+// app.get("/", (req, res) => {
+//   const client = new MongoClient(uri);
+//   async function run() {
+//     try {
+//       const database = client.db("mongodemo");
+//       const student = database.collection("student");
+//       const result = await student.find({}).toArray();
+//       console.log(result);
+//       res.send(result);
+//     } finally {
+//       // Ensures that the client will close when you finish/error
+//       await client.close();
+//     }
+//   }
+//   run().catch(console.dir);
+// });
 
+
+// ADDING EVENT
 app.post("/", (req, res) => {
   console.log(req.body);
   const client = new MongoClient(uri);
   async function run() {
     try {
-      const database = client.db("mongodemo");
-      const student = database.collection("student");
-      const result = await student.insertOne(req.body);
+      const database = client.db("events");
+      const event = database.collection("event");
+      const result = await event.insertOne(req.body);
       console.log(result);
       res.send(result);
     } finally {
-      // Ensures that the client will close when you finish/error
       await client.close();
     }
   }
   run().catch(console.dir);
-
-  // res.send("Sent data via POST!");
 });
 
 app.listen(port, () => {
