@@ -6,5 +6,15 @@
     "install": "^0.13.0",
     "mongodb": "^5.8.1",
     "npm": "^9.8.1"
-  }
+  },
+  "name": "582-project2-events-db",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Charisse",
+  "license": "ISC"
 }

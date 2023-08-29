@@ -15,23 +15,23 @@ const uri =
 // parse application/json
 app.use(bodyParser.json());
 
-// app.get("/", (req, res) => {
-//   const client = new MongoClient(uri);
-//   async function run() {
-//     try {
-//       const database = client.db("mongodemo");
-//       const student = database.collection("student");
-//       const result = await student.find({}).toArray();
-//       console.log(result);
-//       res.send(result);
-//     } finally {
-//       // Ensures that the client will close when you finish/error
-//       await client.close();
-//     }
-//   }
-//   run().catch(console.dir);
-// });
-
+// DISPLAYING EVENT
+app.get("/", (req, res) => {
+  const client = new MongoClient(uri);
+  async function run() {
+    try {
+      const database = client.db("events");
+      const event = database.collection("event");
+      
+      const result = await event.find({}).toArray();
+      console.log(result);
+      res.send(result);
+    } finally {
+      await client.close();
+    }
+  }
+  run().catch(console.dir);
+});
 
 // ADDING EVENT
 app.post("/", (req, res) => {
@@ -41,6 +41,7 @@ app.post("/", (req, res) => {
     try {
       const database = client.db("events");
       const event = database.collection("event");
+
       const result = await event.insertOne(req.body);
       console.log(result);
       res.send(result);
@@ -49,6 +50,29 @@ app.post("/", (req, res) => {
     }
   }
   run().catch(console.dir);
+});
+
+// DELETE EVENT
+app.delete("/:eventId", async (req, res) => {
+  const eventId = req.body.eventId;
+  const client = new MongoClient(uri);
+
+  try {
+    const database = client.db("events");
+    const event = database.collection("event");
+
+    const ObjectId = require("mongodb").ObjectId;
+    const result = await event.deleteOne({ _id: ObjectId(eventId) });
+
+    console.log(result);
+    res.send(result);
+  } finally {
+    await client.close();
+  }
+});
+
+app.use((req, res, next) => {
+  res.status(404).sendFile(__dirname + "/public/404.html");
 });
 
 app.listen(port, () => {
