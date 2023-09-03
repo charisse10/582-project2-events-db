@@ -2,12 +2,12 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
-var cors = require("cors");
+const cors = require("cors");
 app.use(cors());
 
 const bodyParser = require("body-parser");
 
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 // Replace the uri string with your connection string.
 const uri =
   "mongodb+srv://1995510:dbtest@cluster0.5c3wzxp.mongodb.net/?retryWrites=true&w=majority";
@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
     try {
       const database = client.db("events");
       const event = database.collection("event");
-      
+
       const result = await event.find({}).toArray();
       console.log(result);
       res.send(result);
@@ -53,23 +53,25 @@ app.post("/", (req, res) => {
 });
 
 // DELETE EVENT
-app.delete("/:eventId", async (req, res) => {
-  const eventId = req.body.eventId;
+app.delete("/:eventId", (req, res) => {
   const client = new MongoClient(uri);
+  async function run() {
+    try {
+      const database = client.db("events");
+      const event = database.collection("event");
 
-  try {
-    const database = client.db("events");
-    const event = database.collection("event");
-
-    const ObjectId = require("mongodb").ObjectId;
-    const result = await event.deleteOne({ _id: ObjectId(eventId) });
-
-    console.log(result);
-    res.send(result);
-  } finally {
-    await client.close();
+      const result = await event.deleteOne({ _id: ObjectId(req.params.eventId) });
+      console.log(result);
+      res.send(result);
+    } finally {
+      await client.close();
+    }
   }
+  run().catch(console.dir);
 });
+
+
+app.use(express.static(__dirname + "/public"));
 
 app.use((req, res, next) => {
   res.status(404).sendFile(__dirname + "/public/404.html");
