@@ -53,8 +53,8 @@ app.post("/", (req, res) => {
 });
 
 // DELETE EVENT
-app.post("/admin/:eventId", async (req, res) => {
-  const eventId = req.params.eventId;
+app.delete("/events/:eventId", async (req, res) => {
+  const eventId = req.params._id;
   const client = new MongoClient(uri);
 
   try {
@@ -78,7 +78,7 @@ app.post("/admin/:eventId", async (req, res) => {
 });
 
 
-app.use(express.static(__dirname + "/public"));
+// app.use(express.static("/public"));
 
 app.use((req, res, next) => {
   res.status(404).sendFile(__dirname + "/public/404.html");
