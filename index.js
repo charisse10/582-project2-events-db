@@ -76,6 +76,36 @@ app.delete("/events/:eventId", async (req, res) => {
   }
 });
 
+// INTERESTED STATUS
+app.post("/events/:eventId", async (req, res) => {
+  const eventId = req.params.eventId;
+  const { isInterested } = req.body;
+
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const database = client.db("events");
+    const event = database.collection("event");
+
+    const result = await event.updateOne(
+      { _id: new ObjectId(eventId) },
+      { $set: { isInterested: isInterested } }
+    );
+
+    if (result.modifiedCount === 1) {
+      res.sendStatus(204); // Successfully updated
+    } else {
+      res.status(404).json({ error: "Event not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred while updating event interest status." });
+  } finally {
+    client.close();
+  }
+});
+
+
 
 
 // app.use(express.static("/public"));
