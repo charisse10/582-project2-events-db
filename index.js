@@ -54,7 +54,7 @@ app.post("/", (req, res) => {
 
 // DELETE EVENT
 app.delete("/events/:eventId", async (req, res) => {
-  const eventId = req.params._id;
+  const eventId = req.params.eventId;
   const client = new MongoClient(uri);
 
   try {
@@ -62,20 +62,20 @@ app.delete("/events/:eventId", async (req, res) => {
     const database = client.db("events");
     const event = database.collection("event");
 
-    const result = await event.deleteOne({ _id: ObjectId(eventId) });
+    const result = await event.deleteOne({ _id: new ObjectId(eventId) });
 
     if (result.deletedCount === 1) {
-      res.sendStatus(204).end();
+      res.sendStatus(204);
     } else {
       res.status(404).json({ error: "Event not found" });
     }
   } catch (error) {
-    console.error("Error retrieving data:", error);
-    res.status(500).json({ error: "An error occurred while retrieving data." });
+    res.status(500).json({ error: "An error occurred while deleting the event." });
   } finally {
-    await client.close();
+    client.close();
   }
 });
+
 
 
 // app.use(express.static("/public"));
